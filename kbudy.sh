@@ -1,31 +1,29 @@
 #!/bin/bash
 
-# Получаем текст из буфера обмена
+# Функция для получения текста из буфера обмена
 get_clipboard_text() {
     xclip -o -selection clipboard
 }
 
-# Вводим текст из буфера обмена
+# Функция для эмуляции ввода текста
 type_from_clipboard() {
     local text="$1"
 
-    # Ожидаем 2 секунды перед началом ввода, чтобы переключиться на окно или поле
-    sleep 1
+    # Для получения фокуса на активное окно
+    sleep 0.5
 
-    # Эмулируем нажатия клавиш для ввода текста
-    xdotool type --delay 50 "$text"
+    # Эмуляция ввода текста посимвольно
+    for ((i=0; i<${#text}; i++)); do
+        xdotool type "${text:$i:1}"
+        sleep 0.01
+    done
 }
+
 
 # Основная функция
 main() {
-    check_packages
-
-    # Получаем текст из буфера обмена
     local text=$(get_clipboard_text)
-
-    # Вводим текст
     type_from_clipboard "$text"
 }
 
 main
-
